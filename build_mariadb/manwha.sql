@@ -20,7 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Base de données : `manwha`
 --
-
+CREATE DATABASE IF NOT EXISTS `manwha` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+USE `manwha`;
 -- --------------------------------------------------------
 
 --
