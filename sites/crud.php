@@ -48,7 +48,7 @@ $conn = null;
     <main class="container">
         <div class="row">
             <section class="col-12">
-                <h1>Liste des Comptes</h1>
+                <h1>Liste des Manwha</h1>
                 <table class="table">
                     <thead>
                         <th>ID</th>
@@ -73,7 +73,7 @@ $conn = null;
                         ?>
                     </tbody>
                 </table>
-                <a href="add.php" class="btn btn-primary">Ajouter un compte</a>
+                <a href="add.php" class="btn btn-primary">Ajouter un Manwha</a>
                 <br><br>
                 <a href="logout.php">Déconnexion</a>
             </section>

@@ -2,81 +2,89 @@
 // On démarre une session
 session_start();
 
+// Vérifier si des données ont été soumises via POST
 if($_POST){
+    // Vérifier si toutes les données nécessaires sont présentes et non vides
     if(isset($_POST['id']) && !empty($_POST['id'])
-    && isset($_POST['identifiant']) && !empty($_POST['identifiant'])
-    && isset($_POST['mdp']) && !empty($_POST['mdp'])){
-        // On inclut la connexion à la base
+    && isset($_POST['titre']) && !empty($_POST['titre'])
+    && isset($_POST['auteur']) && !empty($_POST['auteur'])
+    && isset($_POST['description']) && !empty($_POST['description'])) {
+        
+        // On inclut la connexion à la base de données
         require_once('includes/db.php');
         $conn = connect();
 
-        // On nettoie les données envoyées
+        // Nettoyer les données envoyées
         $id = strip_tags($_POST['id']);
-        $produit = strip_tags($_POST['identifiant']);
-        $prix = strip_tags($_POST['mdp']);
+        $titre = strip_tags($_POST['titre']);
+        $auteur = strip_tags($_POST['auteur']);
+        $description = strip_tags($_POST['description']);
 
-        $hashedPassword = password_hash($prix, PASSWORD_DEFAULT);
-
-
-        $sql = 'UPDATE `connexion` SET `id`=:id, `identifiant`=:identifiant, `mdp`=:mdp WHERE `id`=:id;';
+        // Préparer la requête SQL pour mettre à jour les données
+        $sql = 'UPDATE `manwha` SET `titre`=:titre, `auteur`=:auteur, `description`=:description WHERE `Id_Manwha`=:id;';
 
         $query = $conn->prepare($sql);
 
+        // Binder les valeurs
         $query->bindValue(':id', $id, PDO::PARAM_INT);
-        $query->bindValue(':identifiant', $produit, PDO::PARAM_STR);
-        $query->bindValue(':mdp', $hashedPassword, PDO::PARAM_STR);
+        $query->bindValue(':titre', $titre, PDO::PARAM_STR);
+        $query->bindValue(':auteur', $auteur, PDO::PARAM_STR);
+        $query->bindValue(':description', $description, PDO::PARAM_STR);
 
+        // Exécuter la requête
         $query->execute();
 
-        $_SESSION['message'] = "Produit modifié";
+        // Rediriger avec un message de succès
+        $_SESSION['message'] = "Manwha modifié avec succès";
         require_once('includes/close.php');
 
         header('Location: crud.php');
-    }else{
+        exit();
+    } else {
+        // Si des champs sont manquants, définir un message d'erreur
         $_SESSION['erreur'] = "Le formulaire est incomplet";
     }
 }
 
-// Est-ce que l'id existe et n'est pas vide dans l'URL
+// Vérifier si un ID valide est présent dans l'URL
 if(isset($_GET['id']) && !empty($_GET['id'])){
     require_once('includes/db.php');
     $conn = connect();
 
-    // On nettoie l'id envoyé
+    // Nettoyer l'ID envoyé
     $id = strip_tags($_GET['id']);
 
-    $sql = 'SELECT * FROM `connexion` WHERE `id` = :id;';
+    // Préparer la requête SQL pour récupérer le manwha
+    $sql = 'SELECT * FROM `manwha` WHERE `Id_Manwha` = :id;';
 
-    // On prépare la requête
+    // Préparer et exécuter la requête
     $query = $conn->prepare($sql);
-
-    // On "accroche" les paramètre (id)
     $query->bindValue(':id', $id, PDO::PARAM_INT);
-
-    // On exécute la requête
     $query->execute();
 
-    // On récupère le produit
-    $produit = $query->fetch();
+    // Récupérer les données du manwha
+    $manwha = $query->fetch();
 
-    // On vérifie si le produit existe
-    if(!$produit){
-        $_SESSION['erreur'] = "Cet id n'existe pas";
+    // Vérifier si le manwha existe
+    if(!$manwha){
+        // Si le manwha n'existe pas, rediriger avec un message d'erreur
+        $_SESSION['erreur'] = "Ce manwha n'existe pas";
         header('Location: crud.php');
+        exit();
     }
-}else{
+} else {
+    // Si aucun ID n'est présent dans l'URL, rediriger avec un message d'erreur
     $_SESSION['erreur'] = "URL invalide";
     header('Location: crud.php');
+    exit();
 }
-
 ?>
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Modifier un produit</title>
-
+    <title>Modifier un manwha</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
 </head>
 <body>
@@ -84,26 +92,30 @@ if(isset($_GET['id']) && !empty($_GET['id'])){
         <div class="row">
             <section class="col-12">
                 <?php
-                    if(!empty($_SESSION['erreur'])){
-                        echo '<div class="alert alert-danger" role="alert">
-                                '. $_SESSION['erreur'].'
-                            </div>';
-                        $_SESSION['erreur'] = "";
-                    }
+                // Afficher les messages d'erreur s'il y en a
+                if(!empty($_SESSION['erreur'])){
+                    echo '<div class="alert alert-danger" role="alert">
+                            '. $_SESSION['erreur'].'
+                        </div>';
+                    $_SESSION['erreur'] = "";
+                }
                 ?>
-                <h1>Modifier un compte</h1>
+                <h1>Modifier un manwha</h1>
+                <!-- Formulaire de modification -->
                 <form method="post">
                     <div class="form-group">
-                        <label for="identifiant">Identifiant</label>
-                        <input type="text" id="identifiant" name="identifiant" class="form-control" value="<?= htmlspecialchars($produit['identifiant'])?>">
-
+                        <label for="titre">Titre</label>
+                        <input type="text" id="titre" name="titre" class="form-control" value="<?= htmlspecialchars($manwha['titre']) ?>">
                     </div>
                     <div class="form-group">
-                        <label for="mdp">Mot de passe</label>
-                        <input type="text" id="mdp" name="mdp" class="form-control" value="<?= $produit['mdp']?>">
-
+                        <label for="auteur">Auteur</label>
+                        <input type="text" id="auteur" name="auteur" class="form-control" value="<?= htmlspecialchars($manwha['auteur']) ?>">
                     </div>
-                    <input type="hidden" value="<?= $produit['id']?>" name="id">
+                    <div class="form-group">
+                        <label for="description">Description</label>
+                        <textarea id="description" name="description" class="form-control"><?= htmlspecialchars($manwha['description']) ?></textarea>
+                    </div>
+                    <input type="hidden" value="<?= $manwha['Id_Manwha'] ?>" name="id">
                     <button class="btn btn-primary">Envoyer</button>
                 </form>
             </section>
