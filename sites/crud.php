@@ -5,14 +5,12 @@ if (!isset($_SESSION['login'])) {
     header("Location: log_in.php"); // Rediriger vers la page de connexion si l'utilisateur n'est pas connecté
     exit();
 }
-?>
 
-<?php
 // On inclut la connexion à la base
 require_once('includes/db.php');
 $conn = connect();
 
-$sql = 'SELECT * FROM `connexion`';
+$sql = 'SELECT * FROM `manwha`';
 
 // On prépare la requête
 $query = $conn->prepare($sql);
@@ -23,8 +21,10 @@ $query->execute();
 // On stocke le résultat dans un tableau associatif
 $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
-require_once('includes/close.php');
+// Fermer la connexion à la base de données
+$conn = null;
 ?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -52,18 +52,22 @@ require_once('includes/close.php');
                 <table class="table">
                     <thead>
                         <th>ID</th>
-                        <th>Identifiant</th>
+                        <th>Titre</th>
+                        <th>Auteur</th>
+                        <th>Description</th>
                         <th>Actions</th>
                     </thead>
                     <tbody>
                         <?php
-                        // On boucle sur la variable result
-                        foreach($result as $produit){
+                        // On boucle sur la variable $result
+                        foreach($result as $manga){
                         ?>
                             <tr>
-                                <td><?= $produit['id'] ?></td>
-                                <td><?= $produit['identifiant'] ?></td>
-                                <td><a href="details.php?id=<?= $produit['id'] ?>">Voir</a> <a href="edit.php?id=<?= $produit['id'] ?>">Modifier</a> <button class="btn btn-danger" onclick="confirmDelete(<?= $produit['id'] ?>)">Supprimer</button></td>
+                                <td><?= $manga['Id_Manwha'] ?></td>
+                                <td><?= $manga['titre'] ?></td>
+                                <td><?= $manga['auteur'] ?></td>
+                                <td><?= $manga['description'] ?></td>
+                                <td><a href="edit.php?id=<?= $manga['Id_Manwha'] ?>">Modifier</a> <button class="btn btn-danger" onclick="confirmDelete(<?= $manga['Id_Manwha'] ?>)">Supprimer</button></td>
                         <?php
                         }
                         ?>

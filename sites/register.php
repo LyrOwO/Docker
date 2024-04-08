@@ -45,7 +45,7 @@
                 
                     if ($result) {
                         echo "Les données ont été insérées avec succès.";
-                        header("location: welcome.php");
+                        header("location: crud.php");
                     } else {
                         echo "Erreur lors de l'insertion des données.";
                     }
