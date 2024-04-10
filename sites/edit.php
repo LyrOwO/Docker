@@ -34,10 +34,24 @@ if($_POST){
         // Exécuter la requête
         $query->execute();
 
+        // Gestion de l'image
+        if (isset($_FILES['file'])) {
+            $tmpName = $_FILES['file']['tmp_name'];
+            $name = $_FILES['file']['name'];
+            $size = $_FILES['file']['size'];
+            $error = $_FILES['file']['error'];
+
+            // Vérifier s'il n'y a pas d'erreur lors du téléchargement
+            if ($error === UPLOAD_ERR_OK) {
+                // Déplacer le fichier téléchargé vers le répertoire souhaité
+                $newFileName = 'img_' . $id . '.png'; // Nom de fichier basé sur l'ID
+                move_uploaded_file($tmpName, 'assets/images/' . $newFileName);
+            }
+        }
+
         // Rediriger avec un message de succès
         $_SESSION['message'] = "Manwha modifié avec succès";
         require_once('includes/close.php');
-
         header('Location: crud.php');
         exit();
     } else {
@@ -102,7 +116,7 @@ if(isset($_GET['id']) && !empty($_GET['id'])){
                 ?>
                 <h1>Modifier un manwha</h1>
                 <!-- Formulaire de modification -->
-                <form method="post">
+                <form method="post" enctype="multipart/form-data">
                     <div class="form-group">
                         <label for="titre">Titre</label>
                         <input type="text" id="titre" name="titre" class="form-control" value="<?= htmlspecialchars($manwha['titre']) ?>">
@@ -114,6 +128,10 @@ if(isset($_GET['id']) && !empty($_GET['id'])){
                     <div class="form-group">
                         <label for="description">Description</label>
                         <textarea id="description" name="description" class="form-control"><?= htmlspecialchars($manwha['description']) ?></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="file">Image: </label>
+                        <input type="file" name="file">
                     </div>
                     <input type="hidden" value="<?= $manwha['Id_Manwha'] ?>" name="id">
                     <button class="btn btn-primary">Envoyer</button>

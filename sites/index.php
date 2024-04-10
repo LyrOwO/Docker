@@ -4,8 +4,26 @@
 require_once('includes/db.php');
 $conn = connect();
 
-// Requête pour récupérer les mangas
-$sql = "SELECT Id_Manwha, titre, auteur  FROM manwha ORDER BY Id_Manwha ASC";
+// Nombre d'éléments à afficher par page
+$elementsParPage = 9;
+
+// Numéro de page actuel
+$currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
+$currentPage = max(1, $currentPage); // Assure que le numéro de page ne soit pas inférieur à 1
+
+// Requête pour compter le nombre total de mangas
+$sqlCount = "SELECT COUNT(*) AS total FROM manwha";
+$queryCount = $conn->query($sqlCount);
+$totalMangas = $queryCount->fetch(PDO::FETCH_ASSOC)['total'];
+
+// Calcul du nombre total de pages
+$pages = ceil($totalMangas / $elementsParPage);
+
+// Calcul du décalage
+$offset = ($currentPage - 1) * $elementsParPage;
+
+// Requête pour récupérer les mangas avec pagination
+$sql = "SELECT Id_Manwha, titre, auteur FROM manwha ORDER BY Id_Manwha ASC LIMIT $elementsParPage OFFSET $offset";
 $query = $conn->query($sql);
 $mangas = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -37,5 +55,62 @@ $mangas = $query->fetchAll(PDO::FETCH_ASSOC);
             </div>
         <?php endforeach; ?>
     </div>
+    <!-- Pagination -->
+    <nav aria-label="Page navigation example">
+            <ul class="pagination justify-content-center">
+
+                <!-- Page précédente -->
+                <?php if ($currentPage > 1): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">&lsaquo;</a>
+                </li>
+                <?php endif; ?>
+
+                <!-- Première page -->
+                <?php if ($currentPage > 2): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">1</a>
+                </li>
+                <?php elseif ($currentPage == 2): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">1</a>
+                </li>
+                <?php endif; ?>
+
+                <!-- Page précédente -->
+                <?php if ($currentPage > 2): ?>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">...</a>
+                </li>
+                <?php endif; ?>
+
+                <!-- Page actuelle -->
+                <li class="page-item active">
+                    <a class="page-link" href="#"><?php echo $currentPage; ?></a>
+                </li>
+
+                <!-- Page suivante -->
+                <?php if ($currentPage < $pages - 1): ?>
+                <li class="page-item disabled">
+                    <a class="page-link" href="#">...</a>
+                </li>
+                <?php endif; ?>
+
+                <!-- Dernière page -->
+                <?php if ($currentPage < $pages): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?php echo $pages; ?>"><?php echo $pages; ?></a>
+                </li>
+                <?php endif; ?>
+                <!-- Page suivante -->
+                <?php if ($currentPage < $pages): ?>
+                <li class="page-item">
+                    <a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">&rsaquo;</a>
+                </li>
+                <?php endif; ?>
+
+            </ul>
+        </nav> 
+
 </body>
 </html>

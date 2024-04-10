@@ -39,7 +39,7 @@ if($_POST){
                 $tmpName = $_FILES['file']['tmp_name'];
                 $name = $_FILES['file']['name'];
                 $size = $_FILES['file']['size'];
-                $error = $FILES['file']['error'];
+                $error = $_FILES['file']['error'];
     
                 // Construct the new filename using the ID
                 $newFileName = 'img_' . $lastInsertId . '.png';
@@ -86,7 +86,7 @@ if($_POST){
                     }
                 ?>
                 <h1>Ajouter un compte</h1>
-                <form method="post">
+                <form method="post" enctype="multipart/form-data"> <!-- Ajout de l'attribut enctype -->
                     <div class="form-group">
                         <label for="titre">Titre</label>
                         <input type="text" id="titre" name="titre" class="form-control">

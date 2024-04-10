@@ -34,7 +34,8 @@ h1 {
 .manga-container {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    grid-gap: 20px;
+
+    grid-gap: 20x;
 }
 
 .manga {
@@ -69,4 +70,3 @@ a {
 a:hover {
     text-decoration: underline;
 }
-
