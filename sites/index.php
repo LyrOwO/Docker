@@ -5,7 +5,7 @@ require_once('includes/db.php');
 $conn = connect();
 
 // Nombre d'éléments à afficher par page
-$elementsParPage = 9;
+$elementsParPage = 3;
 
 // Numéro de page actuel
 $currentPage = isset($_GET['page']) ? $_GET['page'] : 1;
@@ -38,11 +38,11 @@ $mangas = $query->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-    <h1>Répertoire de Manwha</h1>
-    <div class="log-in-link"> 
-        <a href="log_in.php">Connexion admin</a>
+    <div class="top-right"> 
+    <a href="log_in.php">Connexion admin</a>
     </div>
 
+    <h1>Répertoire de Manwha</h1>
     <div class="manga-container">
         <?php foreach ($mangas as $manga) : ?>
             <div class="manga">
@@ -57,60 +57,35 @@ $mangas = $query->fetchAll(PDO::FETCH_ASSOC);
     </div>
     <!-- Pagination -->
     <nav aria-label="Page navigation example">
-            <ul class="pagination justify-content-center">
-
-                <!-- Page précédente -->
-                <?php if ($currentPage > 1): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<?php echo $currentPage - 1; ?>">&lsaquo;</a>
-                </li>
-                <?php endif; ?>
-
-                <!-- Première page -->
-                <?php if ($currentPage > 2): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?page=1">1</a>
-                </li>
-                <?php elseif ($currentPage == 2): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?page=1">1</a>
-                </li>
-                <?php endif; ?>
-
-                <!-- Page précédente -->
-                <?php if ($currentPage > 2): ?>
-                <li class="page-item disabled">
-                    <a class="page-link" href="#">...</a>
-                </li>
-                <?php endif; ?>
-
-                <!-- Page actuelle -->
-                <li class="page-item active">
-                    <a class="page-link" href="#"><?php echo $currentPage; ?></a>
-                </li>
-
-                <!-- Page suivante -->
-                <?php if ($currentPage < $pages - 1): ?>
-                <li class="page-item disabled">
-                    <a class="page-link" href="#">...</a>
-                </li>
-                <?php endif; ?>
-
-                <!-- Dernière page -->
-                <?php if ($currentPage < $pages): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<?php echo $pages; ?>"><?php echo $pages; ?></a>
-                </li>
-                <?php endif; ?>
-                <!-- Page suivante -->
-                <?php if ($currentPage < $pages): ?>
-                <li class="page-item">
-                    <a class="page-link" href="?page=<?php echo $currentPage + 1; ?>">&rsaquo;</a>
-                </li>
-                <?php endif; ?>
-
-            </ul>
-        </nav> 
-
+        <ul class="pagination justify-content-center">
+            <!-- Première page -->
+            <li class="page-item">
+                <a class="page-link" href="?page=1">&laquo;</a>
+            </li>
+            <!-- Page précédente -->
+            <?php if ($currentPage > 1): ?>
+            <li class="page-item">
+                <a class="page-link" href="?page=<?php echo max($currentPage - 1, 1); ?>"><?php echo max($currentPage - 1, 1); ?></a>
+            </li>
+            <?php endif; ?>
+            <!-- Page actuelle -->
+            <li class="page-item active">
+                <a class="page-link" href="#"><?php echo $currentPage; ?></a>
+            </li>
+            <!-- Page suivante -->
+            <?php if ($currentPage < $pages): ?>
+            <li class="page-item">
+                <a class="page-link" href="?page=<?php echo min($currentPage + 1, $pages); ?>"><?php echo min($currentPage + 1, $pages); ?></a>
+            </li>
+            <?php endif; ?>
+            <!-- Dernière page -->
+            <li class="page-item">
+                <a class="page-link" href="?page=<?php echo $pages; ?>">&raquo;</a>
+            </li>
+        </ul>
+    </nav> 
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>
