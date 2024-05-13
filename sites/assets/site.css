@@ -26,25 +26,6 @@ h1 {
     background-color: #0056b3;
 }
 
-.top-right {
-    position: fixed;
-    top: 20px; /* Ajustez cette valeur selon votre préférence */
-    right: 20px; /* Ajustez cette valeur selon votre préférence */
-    z-index: 9999; /* Assurez-vous que le bouton est au-dessus de tous les autres éléments */
-}
-
-.top-right a {
-    display: inline-block;
-    background-color: #007bff;
-    color: #fff;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-}
-
-.top-right a:hover {
-    background-color: #0056b3;
-}
 
 .manga-container {
     display: grid;

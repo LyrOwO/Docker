@@ -38,9 +38,7 @@ $mangas = $query->fetchAll(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="assets/site.css">
 </head>
 <body>
-    <div class="top-right"> 
     <a href="log_in.php">Connexion admin</a>
-    </div>
 
     <h1>Répertoire de Manwha</h1>
     <div class="manga-container">
